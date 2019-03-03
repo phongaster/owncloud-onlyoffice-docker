@@ -6,6 +6,7 @@ $CONFIG = array (
   'trusted_domains' =>
   array (
     0 => 'localhost',
+    1 => 'nginx-server',
   ),
   'datadirectory' => '/var/www/html/data',
   'overwrite.cli.url' => 'http://localhost',
@@ -18,12 +19,19 @@ $CONFIG = array (
   'logtimezone' => 'UTC',
   'installed' => true,
   'filelocking.enabled' => true,
-  'memcache.local' => '\OC\Memcache\APCu',
-  'memcache.locking' => '\OC\Memcache\Redis',
-  'redis' => [
-       'host' => 'localhost',
-       'port' => 6379,
-       'timeout' => 0.0,
-       'password' => '', // Optional, if not defined no password will be used.
-   ],
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'memcache.locking' => '\\OC\\Memcache\\Redis',
+  'redis' =>
+  array (
+    'host' => 'localhost',
+    'port' => 6379,
+    'timeout' => 0.0,
+    'password' => '',
+  ),
+  'onlyoffice' =>
+  array (
+    'DocumentServerUrl' => '/ds-vpath/',
+    'DocumentServerInternalUrl' => 'https://onlyoffice-document-server/',
+    'StorageUrl' => 'https://nginx-server/',
+  ),
 );
