@@ -11,8 +11,47 @@ services:
       - '9000'
     networks:
       - onlyoffice
+    links:
+      - mariadb:mysql
+      - redis:redis
+    environment:
+      - OWNCLOUD_DOMAIN=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=mysql
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
     volumes:
       - app_data:/var/www/html
+      - ./docker-persist/owncloud/config:/var/www/html/config
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    volumes:
+      - ./docker-persist/mariadb/conf.d:/etc/mysql/conf.d
+      - ./docker-persist/mariadb/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: owncloud
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: owncloud
+    expose:
+      - '3306'
+      - '5432'
+    restart: always
+  redis:
+    container_name: redis
+    image: redis:alpine
+    environment:
+      - REDIS_DATABASES=1
+    volumes:
+      - ./docker-persist/redis/data:/data
+    restart: always
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
     image: onlyoffice/documentserver:latest
@@ -39,8 +78,9 @@ services:
     networks:
       - onlyoffice
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./docker-persist/nginx/nginx.conf:/etc/nginx/nginx.conf
       - app_data:/var/www/html
+      - ./docker-persist/nginx/certs:/etc/nginx/certs
 networks:
   onlyoffice:
     driver: 'bridge'
